@@ -23,6 +23,7 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
+            overflow: hidden;
         }
         
         /* Video Loader Styles */
@@ -38,20 +39,24 @@
             align-items: center;
             flex-direction: column;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 1s ease;
         }
         
         #videoLoader video {
-            width: 300px;
-            height: 300px;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         #videoLoader .loader-text {
+            position: absolute;
             color: white;
-            margin-top: 20px;
-            font-size: 1.2rem;
+            font-size: 2rem;
             font-weight: 500;
+            text-align: center;
+            z-index: 10000;
+            bottom: 20%;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         
         .navbar {
@@ -419,7 +424,7 @@
             <source src="video.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-        <div class="loader-text">Loading Application...</div>
+        <div class="loader-text">Loading Employee Roster Viewer...</div>
     </div>
 
     <!-- Alert Container -->
@@ -606,6 +611,7 @@
         const rosterWindowContent = document.getElementById('rosterWindowContent');
         const rosterImageCapture = document.getElementById('rosterImageCapture');
         const videoLoader = document.getElementById('videoLoader');
+        const videoElement = videoLoader.querySelector('video');
 
         // Global variables
         let currentEmployee = null;
@@ -616,13 +622,19 @@
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            // Hide the video loader after 3 seconds (simulating app loading)
+            // Ensure video is loaded and playing
+            videoElement.addEventListener('canplaythrough', function() {
+                this.play().catch(e => console.log("Video play error:", e));
+            });
+
+            // Hide the video loader after video plays for 5 seconds
             setTimeout(() => {
                 videoLoader.style.opacity = '0';
                 setTimeout(() => {
                     videoLoader.style.display = 'none';
-                }, 500);
-            }, 3000);
+                    document.body.style.overflow = 'auto';
+                }, 1000);
+            }, 5000);
             
             loadDepartments();
             setupEventListeners();

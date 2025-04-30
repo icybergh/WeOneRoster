@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Roster Viewer</title>
+    <title>Employee Portal - WeOne</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --success-color: #2ecc71;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
+            --primary-color: #343a40;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
         }
         
         body {
@@ -23,999 +25,1595 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            overflow: hidden;
+            padding-bottom: 60px;
         }
         
-        /* Video Loader Styles */
-        #videoLoader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 9999;
-            transition: opacity 1s ease;
+        .login-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        #videoLoader video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .app-container {
+            display: none;
         }
         
-        #videoLoader .loader-text {
-            position: absolute;
+        .header {
+            background: linear-gradient(135deg, #343a40 0%, #495057 100%);
             color: white;
-            font-size: 2rem;
-            font-weight: 500;
-            text-align: center;
-            z-index: 10000;
-            bottom: 20%;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            padding: 15px 0;
+            margin-bottom: 15px;
         }
         
-        .navbar {
-            background-color: var(--secondary-color);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            color: white;
-            display: flex;
-            align-items: center;
-        }
-        
-        .navbar-brand i {
-            margin-right: 10px;
-            font-size: 1.5rem;
-        }
-        
-        .search-container {
-            background-color: white;
+        .card {
+            border: none;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 15px;
         }
         
-        .roster-container {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-        }
-        
-        .employee-info {
-            background-color: var(--light-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .employee-info h3 {
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-        }
-        
-        .info-item {
-            display: flex;
-            margin-bottom: 0.5rem;
-        }
-        
-        .info-label {
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
             font-weight: 600;
-            min-width: 120px;
-            color: var(--dark-color);
-        }
-        
-        .roster-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .roster-table th, .roster-table td {
             padding: 12px 15px;
-            text-align: center;
-            border: 1px solid #ddd;
+            border-bottom: none;
         }
         
-        .roster-table th {
-            background-color: var(--secondary-color);
-            color: white;
+        .card-body {
+            padding: 15px;
+        }
+        
+        .table-responsive {
+            border-radius: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
             font-weight: 600;
+            color: #495057;
+            border-top: none;
+            vertical-align: middle;
+            white-space: nowrap;
         }
         
-        .roster-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        
-        .roster-table tr:hover {
-            background-color: #f1f1f1;
-        }
-        
-        .shift-key {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .shift-key h3 {
-            color: var(--secondary-color);
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.5rem;
-        }
-        
-        .key-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.8rem;
-            padding: 0.5rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .key-item:hover {
-            background-color: var(--light-color);
-            transform: translateX(5px);
-        }
-        
-        .key-color {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            margin-right: 15px;
-            border: 1px solid #ddd;
-        }
-        
-        .key-text {
-            font-size: 0.95rem;
-        }
-        
-        .no-data {
-            text-align: center;
-            padding: 2rem;
-            color: #777;
-        }
-        
-        .no-data i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #ccc;
+        .table td {
+            vertical-align: middle;
         }
         
         .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-            flex-direction: column;
-        }
-        
-        .loading-video {
-            width: 150px;
-            height: 150px;
-            object-fit: contain;
-        }
-        
-        .loading-text {
-            margin-top: 15px;
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-        
-        .month-navigation {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            background-color: var(--light-color);
-            padding: 1rem;
-            border-radius: 8px;
-        }
-        
-        .month-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-            margin: 0;
-        }
-        
-        .btn-month {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-month:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-        
-        .btn-month:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .status-cell {
-            font-weight: 600;
-        }
-        
-        /* Alert Styles */
-        .alert-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1100;
-            max-width: 350px;
-        }
-        
-        .alert {
-            position: relative;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: all 0.3s ease;
-        }
-        
-        .alert.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .alert-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-        
-        .alert-warning {
-            background-color: var(--warning-color);
-            color: white;
-        }
-        
-        .alert-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        
-        .alert-info {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .alert-icon {
-            font-size: 1.5rem;
-            margin-right: 1rem;
-        }
-        
-        .alert-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        
-        /* Roster Window Styles */
-        .roster-window {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 1000px;
-            max-height: 90vh;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-            z-index: 1050;
             display: none;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-        
-        .roster-window-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .roster-window-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-            margin: 0;
-        }
-        
-        .roster-window-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #777;
-            transition: color 0.3s ease;
-        }
-        
-        .roster-window-close:hover {
-            color: var(--danger-color);
-        }
-        
-        .roster-window-overlay {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1040;
-            display: none;
-        }
-
-        /* Action buttons */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn-download {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-download:hover {
-            background-color: #27ae60;
-            color: white;
-        }
-
-        /* For the image capture */
-        #rosterImageCapture {
-            position: fixed;
-            top: -9999px;
-            left: -9999px;
-            width: 800px;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
         }
         
-        /* Shift status colors */
-        .status-VI { background-color: #e3f2fd; }
-        .status-VJ { background-color: #fff8e1; }
-        .status-YY { background-color: #e8f5e9; }
-        .status-NB { background-color: #ffebee; }
-        .status-DF { background-color: #f3e5f5; }
-        .status-EX { background-color: #e0f7fa; }
-        .status-NR { background-color: #fff3e0; }
-        .status-DX { background-color: #e8eaf6; }
-        .status-NI { background-color: #f1f8e9; }
+        .loading-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 5px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        
+        .month-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .month-display {
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-width: 150px;
+            text-align: center;
+            margin: 0 10px;
+        }
+        
+        .month-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            text-align: center;
+            line-height: 22px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.7rem;
+        }
+        
+        .status-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 6px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 0.8rem;
+        }
+        
+        .status-color {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .payslip {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+        
+        .payslip-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .payslip-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .payslip-period {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .payslip-section {
+            margin-bottom: 15px;
+        }
+        
+        .payslip-section-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 3px;
+        }
+        
+        .payslip-row {
+            display: flex;
+            margin-bottom: 3px;
+            font-size: 0.85rem;
+        }
+        
+        .payslip-label {
+            flex: 1;
+            font-weight: bold;
+        }
+        
+        .payslip-value {
+            flex: 2;
+        }
+        
+        .payslip-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .payslip-table th {
+            background-color: #f2f2f2;
+            text-align: left;
+            padding: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .payslip-table td {
+            padding: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .payslip-footer {
+            margin-top: 20px;
+            padding-top: 8px;
+            border-top: 1px solid #333;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        .payslip-signature {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .payslip-signature-line {
+            width: 120px;
+            border-top: 1px solid #333;
+            text-align: center;
+            padding-top: 3px;
+            font-size: 0.8rem;
+        }
+        
+        /* Bottom navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+        }
+        
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            width: 100%;
+            max-width: 100px;
+        }
+        
+        .nav-btn i {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        
+        .nav-btn.active {
+            color: var(--primary-color);
+            background-color: rgba(52, 58, 64, 0.1);
+        }
+        
+        .tab-content {
+            padding-bottom: 60px;
+        }
+        
+        /* Employee info summary */
+        .employee-summary {
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .employee-summary-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .employee-summary-label {
+            flex: 1;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .employee-summary-value {
+            flex: 2;
+        }
+        
+        .absent-text {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+        
+        /* Print-specific styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .payslip, .payslip * {
+                visibility: visible;
+            }
+            .payslip {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                max-width: 100%;
+                margin: 0;
+                padding: 15px;
+                border: none;
+                background-color: white;
+                page-break-after: always;
+            }
+            .no-print, .no-print * {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .login-container {
+                padding: 20px;
+                margin: 20px;
+            }
+            
+            .table {
+                font-size: 0.8rem;
+            }
+            
+            .table th, .table td {
+                padding: 6px;
+            }
+            
+            .status-legend {
+                gap: 5px;
+            }
+            
+            .status-item {
+                padding: 4px 8px;
+                font-size: 0.7rem;
+            }
+            
+            .month-display {
+                font-size: 1rem;
+                min-width: 120px;
+            }
+            
+            .nav-btn {
+                font-size: 0.7rem;
+            }
+            
+            .nav-btn i {
+                font-size: 1rem;
+            }
+            
+            .payslip-title {
+                font-size: 1rem;
+            }
+            
+            .payslip-period {
+                font-size: 0.8rem;
+            }
+            
+            .payslip-row {
+                flex-direction: column;
+                font-size: 0.8rem;
+            }
+            
+            .payslip-label, .payslip-value {
+                flex: auto;
+            }
+            
+            .payslip-signature {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .payslip-signature-line {
+                width: 100px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Video Loader -->
-    <div id="videoLoader">
-        <video autoplay loop muted playsinline>
-            <source src="video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="loader-text">Loading Employee Roster Viewer...</div>
+    <!-- Loading Indicator -->
+    <div class="loading">
+        <div class="loading-content">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading data...</p>
+        </div>
     </div>
 
-    <!-- Alert Container -->
-    <div class="alert-container" id="alertContainer"></div>
-    
-    <!-- Roster Window Overlay -->
-    <div class="roster-window-overlay" id="rosterOverlay"></div>
-    
-    <!-- Roster Window -->
-    <div class="roster-window" id="rosterWindow">
-        <div class="roster-window-header">
-            <h3 class="roster-window-title">Employee Roster</h3>
-            <button class="roster-window-close" id="rosterWindowClose">
-                <i class="fas fa-times"></i>
-            </button>
+    <!-- Login Container -->
+    <div class="login-container" id="login-container">
+        <div class="text-center mb-4">
+            <img src="weoneimage.jpg" height="200px" width="200px" alt="WeOne Logo" class="mb-3">
+            <h3>Employee Portal</h3>
+            <p class="text-muted">View your roster, attendance and payslips</p>
         </div>
         
-        <div id="rosterWindowContent">
-            <!-- Content will be loaded here -->
-        </div>
+        <form id="login-form">
+            <div class="mb-3">
+                <label for="employee-id" class="form-label">WE ONE ID or EK ID</label>
+                <input type="text" class="form-control" id="employee-id" placeholder="Enter your ID" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="remember-me">
+                <label class="form-check-label" for="remember-me">Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
     </div>
 
-    <!-- Hidden div for image capture -->
-    <div id="rosterImageCapture"></div>
+    <!-- Main App Container -->
+    <div class="app-container" id="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i> <span id="employee-name"></span></h5>
+                        <small class="text-white-50" id="employee-designation"></small>
+                    </div>
+                    <div class="col-4 text-end">
+                        <button id="logout-btn" class="btn btn-sm btn-outline-light">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <!-- Employee Summary -->
+            <div class="employee-summary">
+                <div class="employee-summary-row">
+                    <div class="employee-summary-label">WE ONE ID:</div>
+                    <div class="employee-summary-value" id="info-weone-id"></div>
+                </div>
+                <div class="employee-summary-row">
+                    <div class="employee-summary-label">Department:</div>
+                    <div class="employee-summary-value" id="info-department"></div>
+                </div>
+                <div class="employee-summary-row">
+                    <div class="employee-summary-label">Area:</div>
+                    <div class="employee-summary-value" id="info-area"></div>
+                </div>
+            </div>
+
+            <!-- Month Selector -->
+            <div class="month-selector">
+                <button id="prev-month-btn" class="month-btn" title="Previous Month">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div id="month-display" class="month-display">April 2025</div>
+                <button id="next-month-btn" class="month-btn" title="Next Month">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="employeeTabsContent">
+                <!-- Roster Tab -->
+                <div class="tab-pane fade show active" id="roster-tab-pane" role="tabpanel" aria-labelledby="roster-tab" tabindex="0">
+                    <!-- Status Legend -->
+                    <div class="status-legend">
+                        <div class="status-item">
+                            <div class="status-color" style="background-color: #e3f2fd;"></div>
+                            <span>Vacation/Leave</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-color" style="background-color: #e8f5e9;"></div>
+                            <span>Day Off</span>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-color" style="background-color: #ffebee;"></div>
+                            <span>NB (06:00-19:00)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="roster-table">
+                            <thead>
+                                <tr>
+                                    <th>Day</th>
+                                    <th>Date</th>
+                                    <th>Shift</th>
+                                    <th>Status</th>
+                                    <th>Hours</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Roster data will be inserted here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Attendance Tab -->
+                <div class="tab-pane fade" id="attendance-tab-pane" role="tabpanel" aria-labelledby="attendance-tab" tabindex="0">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie me-2"></i> Attendance Summary
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-primary fw-bold" id="summary-days-worked">0</div>
+                                        <small class="text-muted">Days Worked</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-primary fw-bold" id="summary-total-hours">0</div>
+                                        <small class="text-muted">Total Hours</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-primary fw-bold" id="summary-days-off">0</div>
+                                        <small class="text-muted">Days Off</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-primary fw-bold" id="summary-overtime">0 hrs</div>
+                                        <small class="text-muted">Overtime</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-table me-2"></i> Detailed Attendance
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="attendance-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Day</th>
+                                            <th>Date</th>
+                                            <th>Shift</th>
+                                            <th>Hours</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Attendance data will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payslip Tab -->
+                <div class="tab-pane fade" id="payslip-tab-pane" role="tabpanel" aria-labelledby="payslip-tab" tabindex="0">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-money-bill-wave me-2"></i> Salary Summary
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-success fw-bold" id="salary-basic">AED 0</div>
+                                        <small class="text-muted">Basic Salary</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-success fw-bold" id="salary-food">AED 0</div>
+                                        <small class="text-muted">Food Allowance</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-success fw-bold" id="salary-work-nature">AED 0</div>
+                                        <small class="text-muted">Work Nature</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center">
+                                        <div class="text-success fw-bold" id="salary-total">AED 0</div>
+                                        <small class="text-muted">Net Salary</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary w-100" id="view-payslip-btn">
+                                    <i class="fas fa-file-invoice me-1"></i> View Full Payslip
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-chart-line me-2"></i> Monthly Summary
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="monthly-summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Month</th>
+                                            <th>Days</th>
+                                            <th>Hours</th>
+                                            <th>Salary</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Monthly summary data will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav no-print">
+            <a href="#" class="nav-btn active" id="roster-nav-btn">
                 <i class="fas fa-calendar-alt"></i>
-                Employee Roster Viewer
+                <span>Roster</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="fas fa-home"></i> Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#key"><i class="fas fa-key"></i> Shift Key</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-question-circle"></i> Help</a>
-                    </li>
-                </ul>
-            </div>
+            <a href="#" class="nav-btn" id="attendance-nav-btn">
+                <i class="fas fa-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="#" class="nav-btn" id="payslip-nav-btn">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Payslip</span>
+            </a>
         </div>
-    </nav>
+    </div>
 
-    <div class="container">
-        <!-- Search Section -->
-        <div class="search-container">
-            <h2 class="mb-4"><i class="fas fa-search"></i> Find Your Roster</h2>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="employeeId" class="form-label">WE ONE ID or EK ID</label>
-                    <input type="text" class="form-control" id="employeeId" placeholder="Enter your ID">
+    <!-- Payslip Modal -->
+    <div class="modal fade" id="payslipModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Employee Payslip</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="department" class="form-label">Department</label>
-                    <select class="form-select" id="department">
-                        <option value="">Select Department</option>
-                        <option value="DNATA">DNATA</option>
-                        <!-- Other departments will be loaded dynamically -->
-                    </select>
+                <div class="modal-body" id="payslipModalBody">
+                    <!-- Payslip content will be inserted here by JavaScript -->
                 </div>
-            </div>
-            <button id="searchBtn" class="btn btn-primary">
-                <i class="fas fa-search"></i> Search
-            </button>
-        </div>
-
-        <!-- Shift Key -->
-        <div class="shift-key" id="key">
-            <h3><i class="fas fa-key"></i> Shift Key</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="key-item">
-                        <div class="key-color status-VI"></div>
-                        <div class="key-text">VI - Vacation/Leave</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-VJ"></div>
-                        <div class="key-text">VJ - Vacation/Job</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-YY"></div>
-                        <div class="key-text">YY - (00:00-00:00)</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-NB"></div>
-                        <div class="key-text">NB - (06:00-19:00)</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="key-item">
-                        <div class="key-color status-DF"></div>
-                        <div class="key-text">DF - (18:00-07:00)</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-EX"></div>
-                        <div class="key-text">EX - (08:00-20:00)</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-NR"></div>
-                        <div class="key-text">NR - (20:00-08:00)</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-DX"></div>
-                        <div class="key-text">DX - (09:00-21:00)</div>
-                    </div>
-                    <div class="key-item">
-                        <div class="key-color status-NI"></div>
-                        <div class="key-text">NI - (21:00-09:00)</div>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="print-payslip-btn">
+                        <i class="fas fa-print me-2"></i>Print Payslip
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-calendar-alt"></i> Employee Roster Viewer</h5>
-                    <p>View your work schedule anytime, anywhere.</p>
-                </div>
-                <div class="col-md-3">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Home</a></li>
-                        <li><a href="#key" class="text-white">Shift Key</a></li>
-                        <li><a href="#" class="text-white">Help</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Contact</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-envelope"></i> support@rosterviewer.com</li>
-                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
-                    </ul>
-                </div>
-            </div>
-            <hr>
-            <div class="text-center">
-                <p class="mb-0">&copy; 2025 Employee Roster Viewer. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Firebase and other JS libraries -->
+    <!-- JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     
     <script>
-        // Initialize Firebase
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBnJ0m0QnNyC4pnv-dBEgC3yiq65YPwZvM",
             authDomain: "weone-roster.firebaseapp.com",
             databaseURL: "https://weone-roster-default-rtdb.firebaseio.com",
             projectId: "weone-roster",
-            storageBucket: "weone-roster.firebasestorage.app",
+            storageBucket: "weone-roster.appspot.com",
             messagingSenderId: "335364720116",
             appId: "1:335364720116:web:ae669c448aba3788aca5a1",
             measurementId: "G-Z8MBXC4ZFR"
         };
 
-        firebase.initializeApp(firebaseConfig);
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const database = firebase.database();
-
+        
         // DOM elements
-        const employeeIdInput = document.getElementById('employeeId');
-        const departmentSelect = document.getElementById('department');
-        const searchBtn = document.getElementById('searchBtn');
-        const alertContainer = document.getElementById('alertContainer');
-        const rosterWindow = document.getElementById('rosterWindow');
-        const rosterOverlay = document.getElementById('rosterOverlay');
-        const rosterWindowClose = document.getElementById('rosterWindowClose');
-        const rosterWindowContent = document.getElementById('rosterWindowContent');
-        const rosterImageCapture = document.getElementById('rosterImageCapture');
-        const videoLoader = document.getElementById('videoLoader');
-        const videoElement = videoLoader.querySelector('video');
+        const loadingDiv = document.querySelector('.loading');
+        const loginContainer = document.getElementById('login-container');
+        const appContainer = document.getElementById('app-container');
+        const loginForm = document.getElementById('login-form');
+        const employeeIdInput = document.getElementById('employee-id');
+        const rememberMe = document.getElementById('remember-me');
+        const logoutBtn = document.getElementById('logout-btn');
+        const employeeName = document.getElementById('employee-name');
+        const employeeDesignation = document.getElementById('employee-designation');
+        const infoWeoneId = document.getElementById('info-weone-id');
+        const infoDepartment = document.getElementById('info-department');
+        const infoArea = document.getElementById('info-area');
+        const summaryDaysWorked = document.getElementById('summary-days-worked');
+        const summaryTotalHours = document.getElementById('summary-total-hours');
+        const summaryDaysOff = document.getElementById('summary-days-off');
+        const summaryOvertime = document.getElementById('summary-overtime');
+        const salaryBasic = document.getElementById('salary-basic');
+        const salaryFood = document.getElementById('salary-food');
+        const salaryWorkNature = document.getElementById('salary-work-nature');
+        const salaryTotal = document.getElementById('salary-total');
+        const viewPayslipBtn = document.getElementById('view-payslip-btn');
+        const prevMonthBtn = document.getElementById('prev-month-btn');
+        const nextMonthBtn = document.getElementById('next-month-btn');
+        const monthDisplay = document.getElementById('month-display');
+        const rosterTable = document.getElementById('roster-table');
+        const rosterTableBody = rosterTable.querySelector('tbody');
+        const attendanceTable = document.getElementById('attendance-table');
+        const attendanceTableBody = attendanceTable.querySelector('tbody');
+        const monthlySummaryTable = document.getElementById('monthly-summary-table');
+        const monthlySummaryTableBody = monthlySummaryTable.querySelector('tbody');
+        const payslipModal = new bootstrap.Modal(document.getElementById('payslipModal'));
+        const payslipModalBody = document.getElementById('payslipModalBody');
+        const printPayslipBtn = document.getElementById('print-payslip-btn');
+        
+        // Navigation buttons
+        const rosterNavBtn = document.getElementById('roster-nav-btn');
+        const attendanceNavBtn = document.getElementById('attendance-nav-btn');
+        const payslipNavBtn = document.getElementById('payslip-nav-btn');
+        const rosterTabPane = document.getElementById('roster-tab-pane');
+        const attendanceTabPane = document.getElementById('attendance-tab-pane');
+        const payslipTabPane = document.getElementById('payslip-tab-pane');
 
         // Global variables
         let currentEmployee = null;
-        let currentMonth = 4; // May (0-indexed)
-        let currentYear = 2025;
-        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        let departments = {};
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let employeeData = {};
+        let rosterData = [];
+        let attendanceData = {};
+        let salaryData = {};
+        let monthlyStats = [];
+        let attendanceChart = null;
+        let hoursChart = null;
+        let shiftChart = null;
+        const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+        
+        // Status options with colors
+        const statusOptions = {
+            'VI': { color: '#e3f2fd', description: 'Vacation/Leave' },
+            'VJ': { color: '#fff8e1', description: 'Vacation/Job' },
+            'YY': { color: '#e8f5e9', description: 'Day Off' },
+            'NB': { color: '#ffebee', description: 'NB (06:00-19:00)' },
+            'DF': { color: '#f3e5f5', description: 'DF (18:00-07:00)' },
+            'EX': { color: '#e0f7fa', description: 'EX (08:00-20:00)' },
+            'NR': { color: '#fff3e0', description: 'NR (20:00-08:00)' },
+            'DX': { color: '#e8eaf6', description: 'DX (09:00-21:00)' },
+            'NI': { color: '#f1f8e9', description: 'NI (21:00-09:00)' }
+        };
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            // Ensure video is loaded and playing
-            videoElement.addEventListener('canplaythrough', function() {
-                this.play().catch(e => console.log("Video play error:", e));
-            });
-
-            // Hide the video loader after video plays for 5 seconds
-            setTimeout(() => {
-                videoLoader.style.opacity = '0';
-                setTimeout(() => {
-                    videoLoader.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }, 1000);
-            }, 5000);
-            
-            loadDepartments();
+            checkRememberedLogin();
             setupEventListeners();
         });
 
-        function loadDepartments() {
-            database.ref('departments').once('value').then((snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    departments = data;
-                    // Update department dropdown
-                    departmentSelect.innerHTML = '<option value="">Select Department</option>';
-                    Object.keys(departments).forEach(dept => {
-                        const option = document.createElement('option');
-                        option.value = dept;
-                        option.textContent = dept;
-                        departmentSelect.appendChild(option);
-                    });
-                }
-            }).catch((error) => {
-                console.error("Error loading departments:", error);
-                showAlert('error', 'Error loading departments. Please try again later.');
+        function checkRememberedLogin() {
+            const rememberedId = localStorage.getItem('rememberedEmployeeId');
+            if (rememberedId) {
+                employeeIdInput.value = rememberedId;
+                rememberMe.checked = true;
+            }
+        }
+
+        function showLoading() {
+            loadingDiv.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingDiv.style.display = 'none';
+        }
+
+        function updateMonthDisplay() {
+            monthDisplay.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            // Disable previous month button if we're at the earliest possible month
+            const earliestMonth = new Date(2023, 0, 1); // January 2023 as earliest
+            const currentDate = new Date(currentYear, currentMonth, 1);
+            prevMonthBtn.disabled = currentDate <= earliestMonth;
+        }
+
+        function switchToPreviousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            
+            showLoading();
+            loadEmployeeData().then(() => {
+                updateUI();
+                hideLoading();
             });
+        }
+
+        function switchToNextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            
+            showLoading();
+            loadEmployeeData().then(() => {
+                updateUI();
+                hideLoading();
+            });
+        }
+
+        function loadEmployeeData() {
+            return new Promise((resolve) => {
+                const monthYearKey = `${monthNames[currentMonth]}-${currentYear}`;
+                
+                // Load employee master data
+                database.ref('employees').once('value').then((snapshot) => {
+                    const allEmployees = snapshot.val();
+                    
+                    // Find employee by WE ONE ID or EK ID
+                    let foundEmployee = null;
+                    let department = null;
+                    
+                    Object.keys(allEmployees).forEach(dept => {
+                        Object.keys(allEmployees[dept]).forEach(empId => {
+                            const emp = allEmployees[dept][empId];
+                            if (emp.weoneId === currentEmployee || emp.ekId === currentEmployee) {
+                                foundEmployee = emp;
+                                department = dept;
+                            }
+                        });
+                    });
+                    
+                    if (!foundEmployee) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Employee not found. Please check your ID and try again.'
+                        });
+                        logout();
+                        resolve();
+                        return;
+                    }
+                    
+                    employeeData = foundEmployee;
+                    employeeData.department = department;
+                    
+                    // Load roster data
+                    database.ref(`rosters/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((rosterSnapshot) => {
+                        const rosterDataFromDB = rosterSnapshot.val();
+                        
+                        if (rosterDataFromDB) {
+                            rosterData = rosterDataFromDB.days || [];
+                        } else {
+                            rosterData = [];
+                        }
+                        
+                        // Load attendance data
+                        database.ref(`attendance/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((attendanceSnapshot) => {
+                            attendanceData = attendanceSnapshot.val() || {};
+                            
+                            // Load salary data
+                            database.ref(`salaries/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((salarySnapshot) => {
+                                salaryData = salarySnapshot.val() || {};
+                                
+                                // Load salary settings for this designation
+                                database.ref(`salarySettings/${department}/${employeeData.designation}`).once('value').then((settingsSnapshot) => {
+                                    const settings = settingsSnapshot.val();
+                                    
+                                    if (settings) {
+                                        // If no salary data exists, initialize with settings
+                                        if (!salaryData.basicSalary) {
+                                            salaryData.basicSalary = settings.basicSalary || 2000;
+                                            salaryData.foodAllowance = settings.foodAllowance || 300;
+                                            salaryData.workNatureAllowance = settings.workNatureAllowance || 200;
+                                        }
+                                    }
+                                    
+                                    // Load monthly stats
+                                    loadMonthlyStats().then(() => {
+                                        resolve();
+                                    });
+                                }).catch(() => {
+                                    // If no settings found, use defaults
+                                    if (!salaryData.basicSalary) {
+                                        salaryData.basicSalary = 2000;
+                                        salaryData.foodAllowance = 300;
+                                        salaryData.workNatureAllowance = 200;
+                                    }
+                                    
+                                    loadMonthlyStats().then(() => {
+                                        resolve();
+                                    });
+                                });
+                            }).catch((error) => {
+                                console.error("Error loading salary data:", error);
+                                salaryData = {};
+                                loadMonthlyStats().then(() => {
+                                    resolve();
+                                });
+                            });
+                        }).catch((error) => {
+                            console.error("Error loading attendance data:", error);
+                            attendanceData = {};
+                            salaryData = {};
+                            loadMonthlyStats().then(() => {
+                                resolve();
+                            });
+                        });
+                    }).catch((error) => {
+                        console.error("Error loading roster data:", error);
+                        rosterData = [];
+                        attendanceData = {};
+                        salaryData = {};
+                        loadMonthlyStats().then(() => {
+                            resolve();
+                        });
+                    });
+                }).catch((error) => {
+                    console.error("Error loading employee data:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to load employee data. Please try again.'
+                    });
+                    resolve();
+                });
+            });
+        }
+
+        function loadMonthlyStats() {
+            return new Promise((resolve) => {
+                monthlyStats = [];
+                const promises = [];
+                
+                // Get data for last 12 months
+                for (let i = 0; i < 12; i++) {
+                    const date = new Date(currentYear, currentMonth - i, 1);
+                    const month = date.getMonth();
+                    const year = date.getFullYear();
+                    const monthYearKey = `${monthNames[month]}-${year}`;
+                    
+                    promises.push(
+                        database.ref(`salaries/${employeeData.department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((snapshot) => {
+                            const data = snapshot.val();
+                            if (data) {
+                                monthlyStats.push({
+                                    month,
+                                    year,
+                                    daysWorked: data.daysWorked || 0,
+                                    totalHours: data.totalHours || 0,
+                                    overtime: data.overtime || 0,
+                                    total: data.total || 0
+                                });
+                            }
+                        }).catch(() => {
+                            // Ignore errors for months with no data
+                        })
+                    );
+                }
+                
+                Promise.all(promises).then(() => {
+                    // Sort by year and month (newest first)
+                    monthlyStats.sort((a, b) => {
+                        if (a.year !== b.year) return b.year - a.year;
+                        return b.month - a.month;
+                    });
+                    resolve();
+                });
+            });
+        }
+
+        function updateUI() {
+            updateMonthDisplay();
+            
+            // Update employee info
+            employeeName.textContent = employeeData.name || '';
+            employeeDesignation.textContent = employeeData.designation || '';
+            infoWeoneId.textContent = employeeData.weoneId || '';
+            infoDepartment.textContent = employeeData.department || '';
+            infoArea.textContent = employeeData.area || '';
+            
+            // Calculate current month stats
+            calculateCurrentMonthStats();
+            
+            // Update salary info
+            salaryBasic.textContent = `AED ${(salaryData.basicSalary || 0).toFixed(2)}`;
+            salaryFood.textContent = `AED ${(salaryData.foodAllowance || 0).toFixed(2)}`;
+            salaryWorkNature.textContent = `AED ${(salaryData.workNatureAllowance || 0).toFixed(2)}`;
+            
+            const totalEarnings = (salaryData.basicSalary || 0) + 
+                                 (salaryData.foodAllowance || 0) + 
+                                 (salaryData.workNatureAllowance || 0) + 
+                                 (salaryData.overtime || 0) + 
+                                 (salaryData.specialReward || 0);
+            const totalDeductions = (salaryData.eidDeduction || 0) + 
+                                   (salaryData.advancedSalary || 0);
+            const netSalary = totalEarnings - totalDeductions;
+            
+            salaryTotal.textContent = `AED ${netSalary.toFixed(2)}`;
+            
+            // Render tables
+            renderRosterTable();
+            renderAttendanceTable();
+            renderMonthlySummaryTable();
+        }
+
+        function calculateCurrentMonthStats() {
+            let daysWorked = 0;
+            let totalHours = 0;
+            let daysOff = 0;
+            let absents = 0;
+            let overtimeHours = 0;
+            
+            // Calculate from roster and attendance data
+            if (rosterData && rosterData.length > 0) {
+                rosterData.forEach((status, dayIndex) => {
+                    // Skip if status is vacation/leave
+                    if (status === 'VI' || status === 'VJ') {
+                        daysOff++;
+                        return;
+                    }
+                    
+                    if (status === 'YY') {
+                        daysOff++;
+                        return;
+                    }
+                    
+                    // Check attendance data for this day
+                    const attendanceRecord = attendanceData[dayIndex];
+                    
+                    if (attendanceRecord) {
+                        const hours = parseFloat(attendanceRecord.hours) || 0;
+                        if (hours > 0) {
+                            daysWorked++;
+                            totalHours += hours;
+                            
+                            // Calculate overtime (simplified - any hours over 8 is overtime)
+                            if (hours > 8) {
+                                overtimeHours += (hours - 8);
+                            }
+                        } else {
+                            absents++;
+                        }
+                    } else {
+                        // No attendance record - assume absent
+                        absents++;
+                    }
+                });
+            }
+            
+            // Update summary cards
+            summaryDaysWorked.textContent = daysWorked;
+            summaryTotalHours.textContent = totalHours.toFixed(1);
+            summaryDaysOff.textContent = daysOff;
+            summaryOvertime.textContent = `${overtimeHours.toFixed(1)} hrs`;
+        }
+
+        function renderRosterTable() {
+            rosterTableBody.innerHTML = '';
+            
+            if (!rosterData || rosterData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="text-center">No roster data available for this month</td>';
+                rosterTableBody.appendChild(row);
+                return;
+            }
+            
+            // Get number of days in current month
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            for (let i = 0; i < daysInMonth; i++) {
+                const date = new Date(currentYear, currentMonth, i + 1);
+                const dayName = dayNames[date.getDay()];
+                const status = rosterData[i] || 'YY';
+                const statusInfo = statusOptions[status] || statusOptions['YY'];
+                
+                // Get attendance record for this day
+                const attendanceRecord = attendanceData[i];
+                let hoursWorked = '';
+                let attendanceStatus = '';
+                
+                if (attendanceRecord) {
+                    const hours = parseFloat(attendanceRecord.hours) || 0;
+                    if (hours > 0) {
+                        hoursWorked = hours;
+                    } else {
+                        hoursWorked = '<span class="absent-text">Absent</span>';
+                    }
+                } else {
+                    hoursWorked = '<span class="absent-text">Absent</span>';
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dayName}</td>
+                    <td>${i + 1}</td>
+                    <td>${statusInfo.description}</td>
+                    <td class="status-cell" style="background-color: ${statusInfo.color}">
+                        ${status}
+                    </td>
+                    <td>${hoursWorked}</td>
+                `;
+                
+                rosterTableBody.appendChild(row);
+            }
+        }
+
+        function renderAttendanceTable() {
+            attendanceTableBody.innerHTML = '';
+            
+            if (!rosterData || rosterData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="text-center">No attendance data available for this month</td>';
+                attendanceTableBody.appendChild(row);
+                return;
+            }
+            
+            // Get number of days in current month
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            for (let i = 0; i < daysInMonth; i++) {
+                const date = new Date(currentYear, currentMonth, i + 1);
+                const dayName = dayNames[date.getDay()];
+                const status = rosterData[i] || 'YY';
+                const statusInfo = statusOptions[status] || statusOptions['YY'];
+                
+                // Skip days off and vacations
+                if (status === 'YY' || status === 'VI' || status === 'VJ') continue;
+                
+                // Get attendance record for this day
+                const attendanceRecord = attendanceData[i];
+                let hoursWorked = '';
+                let attendanceStatus = '';
+                
+                if (attendanceRecord) {
+                    const hours = parseFloat(attendanceRecord.hours) || 0;
+                    if (hours > 0) {
+                        hoursWorked = hours;
+                        attendanceStatus = 'Present';
+                    } else {
+                        hoursWorked = '<span class="absent-text">Absent</span>';
+                        attendanceStatus = '<span class="absent-text">Absent</span>';
+                    }
+                } else {
+                    hoursWorked = '<span class="absent-text">Absent</span>';
+                    attendanceStatus = '<span class="absent-text">Absent</span>';
+                }
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dayName}</td>
+                    <td>${i + 1}</td>
+                    <td>${statusInfo.description}</td>
+                    <td>${hoursWorked}</td>
+                    <td>${attendanceStatus}</td>
+                `;
+                
+                attendanceTableBody.appendChild(row);
+            }
+            
+            if (attendanceTableBody.children.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" class="text-center">No working days this month</td>';
+                attendanceTableBody.appendChild(row);
+            }
+        }
+
+        function renderMonthlySummaryTable() {
+            monthlySummaryTableBody.innerHTML = '';
+            
+            if (monthlyStats.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="4" class="text-center">No salary data available</td>';
+                monthlySummaryTableBody.appendChild(row);
+                return;
+            }
+            
+            monthlyStats.forEach(stat => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${monthNames[stat.month].substring(0, 3)} ${stat.year}</td>
+                    <td>${stat.daysWorked}</td>
+                    <td>${stat.totalHours.toFixed(1)}</td>
+                    <td>AED ${stat.total.toFixed(2)}</td>
+                `;
+                monthlySummaryTableBody.appendChild(row);
+            });
+        }
+
+        function showPayslip() {
+            if (!salaryData.basicSalary) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Salary Data',
+                    text: 'Salary information is not available for this month.'
+                });
+                return;
+            }
+            
+            const monthYear = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            // Calculate net pay
+            const totalEarnings = (salaryData.basicSalary || 0) + 
+                                 (salaryData.foodAllowance || 0) + 
+                                 (salaryData.workNatureAllowance || 0) + 
+                                 (salaryData.overtime || 0) + 
+                                 (salaryData.specialReward || 0);
+            const totalDeductions = (salaryData.eidDeduction || 0) + 
+                                   (salaryData.advancedSalary || 0);
+            const netPay = totalEarnings - totalDeductions;
+            
+            payslipModalBody.innerHTML = `
+                <div class="payslip">
+                    <div class="payslip-header">
+                        <div class="payslip-title">PAYROLL INFORMATION</div>
+                        <div class="payslip-period">Payment Period: ${monthYear}</div>
+                    </div>
+                    
+                    <div class="payslip-section">
+                        <div class="payslip-section-title">Personal Information</div>
+                        <div class="payslip-row">
+                            <div class="payslip-label">Employee Name</div>
+                            <div class="payslip-value">${employeeData.name || ''}</div>
+                        </div>
+                        <div class="payslip-row">
+                            <div class="payslip-label">Employee Number</div>
+                            <div class="payslip-value">${employeeData.weoneId || ''}</div>
+                        </div>
+                        <div class="payslip-row">
+                            <div class="payslip-label">Organization</div>
+                            <div class="payslip-value">WeOne</div>
+                        </div>
+                        <div class="payslip-row">
+                            <div class="payslip-label">Position</div>
+                            <div class="payslip-value">${employeeData.designation || ''}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="payslip-section">
+                        <div class="payslip-section-title">Summary of Payment</div>
+                        <table class="payslip-table">
+                            <tr>
+                                <th>Total Earnings</th>
+                                <th>Total Deductions</th>
+                                <th>Net Pay</th>
+                            </tr>
+                            <tr>
+                                <td>AED ${totalEarnings.toFixed(2)}</td>
+                                <td>AED ${totalDeductions.toFixed(2)}</td>
+                                <td>AED ${netPay.toFixed(2)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="payslip-section">
+                        <div class="payslip-section-title">Earnings</div>
+                        <table class="payslip-table">
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                            <tr>
+                                <td>Basic Salary</td>
+                                <td>AED ${(salaryData.basicSalary || 0).toFixed(2)}</td>
+                                <td>EID Charges</td>
+                                <td>AED ${(salaryData.eidDeduction || 0).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Food Allowance</td>
+                                <td>AED ${(salaryData.foodAllowance || 0).toFixed(2)}</td>
+                                <td>Advanced Salary</td>
+                                <td>AED ${(salaryData.advancedSalary || 0).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Work Nature Allowance</td>
+                                <td>AED ${(salaryData.workNatureAllowance || 0).toFixed(2)}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Overtime</td>
+                                <td>AED ${(salaryData.overtime || 0).toFixed(2)}</td>
+                                <td>Total Deductions</td>
+                                <td>AED ${totalDeductions.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>Special Reward</td>
+                                <td>AED ${(salaryData.specialReward || 0).toFixed(2)}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Total Earnings</td>
+                                <td>AED ${totalEarnings.toFixed(2)}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="payslip-section">
+                        <div class="payslip-section-title">Information</div>
+                        <table class="payslip-table">
+                            <tr>
+                                <th>Description</th>
+                                <th>Input Value</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Annual Leave Balance</td>
+                                <td>Number of Days</td>
+                                <td>34.08</td>
+                            </tr>
+                            <tr>
+                                <td>Annual Leave Balance</td>
+                                <td>Credited Upto</td>
+                                <td>31-03-2025</td>
+                            </tr>
+                            <tr>
+                                <td>Overtime</td>
+                                <td>Normal Hours</td>
+                                <td>${(salaryData.overtime / (salaryData.basicSalary / 200)).toFixed(2)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="payslip-section">
+                        <div class="payslip-section-title">Payment Information</div>
+                        <table class="payslip-table">
+                            <tr>
+                                <th>Method</th>
+                                <th>Bank Name</th>
+                                <th>Branch Name</th>
+                                <th>Account Number</th>
+                                <th>Amount</th>
+                            </tr>
+                            <tr>
+                                <td>Bank Transfer</td>
+                                <td>EMIRATES NBD</td>
+                                <td>DUBAI</td>
+                                <td>••••••••••••••••6951</td>
+                                <td>AED ${netPay.toFixed(2)}</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="4">Total</td>
+                                <td>AED ${netPay.toFixed(2)}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="payslip-footer">
+                        <p>This is a computer generated payslip and does not require a signature.</p>
+                        <p>Printed on: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                </div>
+            `;
+            
+            payslipModal.show();
+        }
+
+        function printCurrentPayslip() {
+            const payslipContent = payslipModalBody.innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = payslipContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            
+            // Reinitialize event listeners
+            setupEventListeners();
+            
+            // Re-show the payslip modal
+            payslipModal.show();
+        }
+
+        function login() {
+            const employeeId = employeeIdInput.value.trim();
+            
+            if (!employeeId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Please enter your WE ONE ID or EK ID'
+                });
+                return;
+            }
+            
+            showLoading();
+            
+            // Check if employee exists
+            database.ref('employees').once('value').then((snapshot) => {
+                const allEmployees = snapshot.val();
+                let foundEmployee = null;
+                
+                Object.keys(allEmployees).forEach(dept => {
+                    Object.keys(allEmployees[dept]).forEach(empId => {
+                        const emp = allEmployees[dept][empId];
+                        if (emp.weoneId === employeeId || emp.ekId === employeeId) {
+                            foundEmployee = emp;
+                        }
+                    });
+                });
+                
+                if (!foundEmployee) {
+                    hideLoading();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Employee not found. Please check your ID and try again.'
+                    });
+                    return;
+                }
+                
+                // Remember login if checkbox is checked
+                if (rememberMe.checked) {
+                    localStorage.setItem('rememberedEmployeeId', employeeId);
+                } else {
+                    localStorage.removeItem('rememberedEmployeeId');
+                }
+                
+                // Set current employee and load data
+                currentEmployee = employeeId;
+                loginContainer.style.display = 'none';
+                appContainer.style.display = 'block';
+                
+                loadEmployeeData().then(() => {
+                    updateUI();
+                    hideLoading();
+                });
+            }).catch((error) => {
+                hideLoading();
+                console.error("Error loading employee data:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to load employee data. Please try again.'
+                });
+            });
+        }
+
+        function logout() {
+            currentEmployee = null;
+            employeeData = {};
+            rosterData = [];
+            attendanceData = {};
+            salaryData = {};
+            monthlyStats = [];
+            
+            loginContainer.style.display = 'flex';
+            appContainer.style.display = 'none';
+            
+            // Reset form
+            loginForm.reset();
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab panes
+            rosterTabPane.classList.remove('show', 'active');
+            attendanceTabPane.classList.remove('show', 'active');
+            payslipTabPane.classList.remove('show', 'active');
+            
+            // Remove active class from all nav buttons
+            rosterNavBtn.classList.remove('active');
+            attendanceNavBtn.classList.remove('active');
+            payslipNavBtn.classList.remove('active');
+            
+            // Show selected tab and mark button as active
+            switch(tabName) {
+                case 'roster':
+                    rosterTabPane.classList.add('show', 'active');
+                    rosterNavBtn.classList.add('active');
+                    break;
+                case 'attendance':
+                    attendanceTabPane.classList.add('show', 'active');
+                    attendanceNavBtn.classList.add('active');
+                    break;
+                case 'payslip':
+                    payslipTabPane.classList.add('show', 'active');
+                    payslipNavBtn.classList.add('active');
+                    break;
+            }
         }
 
         function setupEventListeners() {
-            // Search button
-            searchBtn.addEventListener('click', searchEmployee);
-            
-            // Close roster window
-            rosterWindowClose.addEventListener('click', closeRosterWindow);
-            rosterOverlay.addEventListener('click', closeRosterWindow);
-            
-            // Allow search on Enter key
-            employeeIdInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    searchEmployee();
-                }
-            });
-        }
-
-        function searchEmployee() {
-            const employeeId = employeeIdInput.value.trim();
-            const department = departmentSelect.value;
-            
-            if (!employeeId) {
-                showAlert('warning', 'Please enter your WE ONE ID or EK ID');
-                return;
-            }
-            
-            if (!department) {
-                showAlert('warning', 'Please select your department');
-                return;
-            }
-            
-            showLoading(true);
-            
-            // First, find the employee in the current month's roster
-            const monthYearKey = `${currentYear}-${currentMonth}`;
-            database.ref(`rosters/${department}/${monthYearKey}`).once('value').then((snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    // Find employee by WE ONE ID or EK ID
-                    const employee = Object.values(data).find(emp => 
-                        (emp.weoneId && emp.weoneId.toString() === employeeId) || 
-                        (emp.ekId && emp.ekId.toString() === employeeId)
-                    );
-                    
-                    if (employee) {
-                        currentEmployee = employee;
-                        showAlert('success', 'Employee record found! Loading roster...');
-                        openRosterWindow(employee);
-                    } else {
-                        showAlert('error', 'No employee found with that ID in the selected department');
-                    }
-                } else {
-                    showAlert('error', 'No roster data available for the selected department and month');
-                }
-                showLoading(false);
-            }).catch((error) => {
-                showLoading(false);
-                console.error("Error searching for employee:", error);
-                showAlert('error', 'Error searching for employee. Please try again.');
-            });
-        }
-
-        function openRosterWindow(employee) {
-            // Set up the roster window content
-            const content = `
-                <div class="employee-info">
-                    <h3><i class="fas fa-user"></i> Employee Information</h3>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="info-item">
-                                <span class="info-label">Name:</span>
-                                <span>${employee.name || '-'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">WE ONE ID:</span>
-                                <span>${employee.weoneId || '-'}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="info-item">
-                                <span class="info-label">EK ID:</span>
-                                <span>${employee.ekId || '-'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Designation:</span>
-                                <span>${employee.designation || '-'}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="action-buttons">
-                    <button id="downloadRoster" class="btn btn-download">
-                        <i class="fas fa-download"></i> Download as Image
-                    </button>
-                </div>
-                
-                <div class="month-navigation">
-                    <button id="prevMonth" class="btn-month" disabled>
-                        <i class="fas fa-chevron-left"></i> Previous Month
-                    </button>
-                    <h3 class="month-title">${monthNames[currentMonth]} ${currentYear}</h3>
-                    <button id="nextMonth" class="btn-month">
-                        Next Month <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                
-                <div id="rosterLoading" class="loading" style="display: none;">
-                    <video autoplay loop muted playsinline class="loading-video">
-                        <source src="video.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <div class="loading-text">Loading Roster Data...</div>
-                </div>
-                
-                <div id="rosterContent">
-                    <table class="roster-table">
-                        <thead>
-                            <tr>
-                                <th>Day</th>
-                                <th>Date</th>
-                                <th>Shift</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rosterBody">
-                            ${renderRosterRows(employee.days || [])}
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div id="noRosterData" class="no-data" style="display: none;">
-                    <i class="fas fa-calendar-times"></i>
-                    <h4>No Roster Data Found</h4>
-                    <p>We couldn't find any roster information for this employee.</p>
-                </div>
-            `;
-            
-            rosterWindowContent.innerHTML = content;
-            
-            // Set up event listeners for the new elements
-            document.getElementById('prevMonth').addEventListener('click', () => {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                updateRosterWindow();
+            // Login form
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                login();
             });
             
-            document.getElementById('nextMonth').addEventListener('click', () => {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                updateRosterWindow();
-            });
-
-            // Download roster as image
-            document.getElementById('downloadRoster').addEventListener('click', downloadRosterAsImage);
+            // Logout button
+            logoutBtn.addEventListener('click', logout);
             
-            // Show the window
-            rosterWindow.style.display = 'block';
-            rosterOverlay.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeRosterWindow() {
-            rosterWindow.style.display = 'none';
-            rosterOverlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        function updateRosterWindow() {
-            const rosterBody = document.getElementById('rosterBody');
-            const monthTitle = document.querySelector('.month-title');
-            const prevMonthBtn = document.getElementById('prevMonth');
-            const loadingDiv = document.getElementById('rosterLoading');
-            const noDataDiv = document.getElementById('noRosterData');
+            // Month navigation buttons
+            prevMonthBtn.addEventListener('click', switchToPreviousMonth);
+            nextMonthBtn.addEventListener('click', switchToNextMonth);
             
-            // Update month title
-            monthTitle.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            // View payslip button
+            viewPayslipBtn.addEventListener('click', showPayslip);
             
-            // Disable previous month button if we're at the earliest possible month
-            prevMonthBtn.disabled = currentMonth === 0 && currentYear === 2025;
+            // Print payslip button
+            printPayslipBtn.addEventListener('click', printCurrentPayslip);
             
-            // Show loading
-            rosterBody.innerHTML = '';
-            loadingDiv.style.display = 'flex';
-            noDataDiv.style.display = 'none';
-            
-            // Load new data
-            const monthYearKey = `${currentYear}-${currentMonth}`;
-            const department = departmentSelect.value;
-            const employeeId = employeeIdInput.value.trim();
-            
-            database.ref(`rosters/${department}/${monthYearKey}`).once('value').then((snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    // Find the employee again in case we switched months
-                    const employee = Object.values(data).find(emp => 
-                        (emp.weoneId && emp.weoneId.toString() === employeeId) || 
-                        (emp.ekId && emp.ekId.toString() === employeeId)
-                    );
-                    
-                    if (employee && employee.days) {
-                        rosterBody.innerHTML = renderRosterRows(employee.days);
-                    } else {
-                        noDataDiv.style.display = 'block';
-                    }
-                } else {
-                    noDataDiv.style.display = 'block';
-                }
-                loadingDiv.style.display = 'none';
-            }).catch((error) => {
-                loadingDiv.style.display = 'none';
-                console.error("Error loading roster data:", error);
-                showAlert('error', 'Error loading roster data. Please try again.');
-            });
-        }
-
-        function renderRosterRows(daysData) {
-            // Get number of days in the current month
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            let rows = '';
-            
-            for (let i = 1; i <= daysInMonth; i++) {
-                const date = new Date(currentYear, currentMonth, i);
-                const dayName = dayNames[date.getDay()];
-                const shiftCode = daysData[i - 1] || 'YY';
-                const shiftInfo = getShiftInfo(shiftCode);
-                
-                rows += `
-                    <tr>
-                        <td>${dayName}</td>
-                        <td>${i}</td>
-                        <td class="status-cell status-${shiftCode}" title="${shiftInfo.description}">
-                            ${shiftCode}
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            return rows;
-        }
-
-        function getShiftInfo(shiftCode) {
-            const shiftMap = {
-                'VI': { description: 'Vacation/Leave' },
-                'VJ': { description: 'Vacation/Job' },
-                'YY': { description: '00:00-00:00' },
-                'NB': { description: '06:00-19:00' },
-                'DF': { description: '18:00-07:00' },
-                'EX': { description: '08:00-20:00' },
-                'NR': { description: '20:00-08:00' },
-                'DX': { description: '09:00-21:00' },
-                'NI': { description: '21:00-09:00' }
-            };
-            
-            return shiftMap[shiftCode] || { description: 'Unknown shift' };
-        }
-
-        function downloadRosterAsImage() {
-            showAlert('info', 'Preparing your roster for download...');
-            
-            // Create a copy of the roster table with additional information
-            const captureDiv = document.getElementById('rosterImageCapture');
-            const employeeInfo = `
-                <h2 style="text-align: center; color: #2c3e50; margin-bottom: 20px;">Employee Roster - ${monthNames[currentMonth]} ${currentYear}</h2>
-                <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <div><strong>Name:</strong> ${currentEmployee.name || '-'}</div>
-                        <div><strong>WE ONE ID:</strong> ${currentEmployee.weoneId || '-'}</div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <div><strong>EK ID:</strong> ${currentEmployee.ekId || '-'}</div>
-                        <div><strong>Designation:</strong> ${currentEmployee.designation || '-'}</div>
-                    </div>
-                </div>
-            `;
-            
-            // Clone the table and add to our capture div
-            const tableClone = document.querySelector('.roster-table').cloneNode(true);
-            captureDiv.innerHTML = employeeInfo;
-            captureDiv.appendChild(tableClone);
-            
-            // Use html2canvas to capture the image
-            html2canvas(captureDiv, {
-                scale: 2, // Higher quality
-                logging: false,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff'
-            }).then(canvas => {
-                // Create download link
-                const link = document.createElement('a');
-                link.download = `roster_${currentEmployee.weoneId || currentEmployee.ekId}_${monthNames[currentMonth]}_${currentYear}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                showAlert('success', 'Roster downloaded successfully!');
-            }).catch(error => {
-                console.error('Error generating image:', error);
-                showAlert('error', 'Failed to download roster. Please try again.');
-            });
-        }
-
-        function showLoading(show) {
-            if (show) {
-                searchBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Searching...';
-                searchBtn.disabled = true;
-            } else {
-                searchBtn.innerHTML = '<i class="fas fa-search"></i> Search';
-                searchBtn.disabled = false;
-            }
-        }
-
-        function showAlert(type, message) {
-            const alertTypes = {
-                'success': { icon: 'check-circle', title: 'Success!' },
-                'error': { icon: 'exclamation-circle', title: 'Error!' },
-                'warning': { icon: 'exclamation-triangle', title: 'Warning!' },
-                'info': { icon: 'info-circle', title: 'Info' }
-            };
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            
-            alertDiv.innerHTML = `
-                <i class="fas fa-${alertTypes[type].icon} alert-icon"></i>
-                <div>
-                    <strong>${alertTypes[type].title}</strong>
-                    <p class="mb-0">${message}</p>
-                </div>
-                <button class="alert-close">&times;</button>
-            `;
-            
-            const closeBtn = alertDiv.querySelector('.alert-close');
-            closeBtn.addEventListener('click', () => {
-                alertDiv.remove();
+            // Navigation buttons
+            rosterNavBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchTab('roster');
             });
             
-            alertContainer.appendChild(alertDiv);
+            attendanceNavBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchTab('attendance');
+            });
             
-            // Show the alert
-            setTimeout(() => {
-                alertDiv.classList.add('show');
-            }, 10);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                alertDiv.classList.remove('show');
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 300);
-            }, 5000);
+            payslipNavBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchTab('payslip');
+            });
         }
     </script>
 </body>

@@ -10,88 +10,196 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         :root {
-            --primary-color: #343a40;
-            --secondary-color: #6c757d;
-            --success-color: #28a745;
-            --info-color: #17a2b8;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
+            --primary-color: #4361ee;
+            --primary-light: #4cc9f0;
+            --secondary-color: #7209b7;
+            --success-color: #4ad66d;
+            --info-color: #4895ef;
+            --warning-color: #f8961e;
+            --danger-color: #f94144;
             --light-color: #f8f9fa;
-            --dark-color: #343a40;
+            --dark-color: #212529;
+            --text-dark: #2b2d42;
+            --text-light: #8d99ae;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            --card-gradient: linear-gradient(to bottom right, #ffffff, #f8f9fa);
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-dark);
             line-height: 1.6;
-            padding-bottom: 60px;
+            padding-bottom: 80px;
+            min-height: 100vh;
         }
         
+        /* Neumorphic Elements */
+        .neumorphic {
+            background: var(--card-gradient);
+            border-radius: 16px;
+            box-shadow: 
+                8px 8px 16px rgba(163, 177, 198, 0.3),
+                -8px -8px 16px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .neumorphic:hover {
+            box-shadow: 
+                12px 12px 24px rgba(163, 177, 198, 0.4),
+                -12px -12px 24px rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .neumorphic-flat {
+            background: var(--card-gradient);
+            border-radius: 12px;
+            box-shadow: 
+                4px 4px 8px rgba(163, 177, 198, 0.2),
+                -4px -4px 8px rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .neumorphic-inset {
+            background: var(--card-gradient);
+            border-radius: 12px;
+            box-shadow: 
+                inset 3px 3px 6px rgba(163, 177, 198, 0.2),
+                inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Login Container */
         .login-container {
-            max-width: 500px;
+            max-width: 480px;
             margin: 50px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            background: var(--card-gradient);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(67, 97, 238, 0.05) 0%,
+                rgba(76, 201, 240, 0.05) 100%
+            );
+            z-index: -1;
+            transform: rotate(15deg);
         }
         
         .app-container {
             display: none;
         }
         
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #343a40 0%, #495057 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
-            padding: 15px 0;
-            margin-bottom: 15px;
+            padding: 20px 0;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.2);
+            position: relative;
+            overflow: hidden;
         }
         
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-light), var(--success-color));
+        }
+        
+        /* Cards */
         .card {
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 15px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            overflow: hidden;
+            background: var(--card-gradient);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
         
         .card-header {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             font-weight: 600;
-            padding: 12px 15px;
+            padding: 15px 20px;
             border-bottom: none;
+            position: relative;
+        }
+        
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-light), var(--success-color));
         }
         
         .card-body {
-            padding: 15px;
+            padding: 20px;
         }
         
+        /* Tables */
         .table-responsive {
-            border-radius: 8px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         
         .table {
             margin-bottom: 0;
             font-size: 0.9rem;
+            background: white;
         }
         
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
-            color: #495057;
+            color: var(--text-dark);
             border-top: none;
             vertical-align: middle;
             white-space: nowrap;
+            padding: 12px 15px;
         }
         
         .table td {
             vertical-align: middle;
+            padding: 12px 15px;
+            border-color: #f1f3f5;
         }
         
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Loading Indicator */
         .loading {
             display: none;
             position: fixed;
@@ -100,208 +208,265 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
             z-index: 2000;
             justify-content: center;
             align-items: center;
         }
         
         .loading-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
+            background: var(--card-gradient);
+            padding: 30px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            width: 100%;
         }
         
+        /* Badges */
         .badge {
             font-weight: 500;
-            padding: 5px 8px;
+            padding: 6px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
+            letter-spacing: 0.5px;
         }
         
+        /* Month Selector */
         .month-selector {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 15px 0;
+            margin: 20px 0;
         }
         
         .month-display {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            min-width: 150px;
+            min-width: 180px;
             text-align: center;
-            margin: 0 10px;
+            margin: 0 15px;
+            color: var(--text-dark);
+            background: var(--card-gradient);
+            padding: 8px 20px;
+            border-radius: 50px;
+            box-shadow: 
+                4px 4px 8px rgba(163, 177, 198, 0.2),
+                -4px -4px 8px rgba(255, 255, 255, 0.7);
         }
         
         .month-btn {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
             border: none;
-            width: 36px;
-            height: 36px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
         }
         
+        .month-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .month-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Status Elements */
         .status-badge {
             display: inline-block;
-            width: 22px;
-            height: 22px;
-            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
             text-align: center;
-            line-height: 22px;
+            line-height: 24px;
             font-weight: bold;
             color: white;
             font-size: 0.7rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .status-legend {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
         }
         
         .status-item {
             display: flex;
             align-items: center;
-            background-color: white;
-            padding: 6px 10px;
-            border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            font-size: 0.8rem;
+            background: var(--card-gradient);
+            padding: 8px 14px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        
+        .status-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
         
         .status-color {
-            width: 16px;
-            height: 16px;
-            margin-right: 6px;
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
             border-radius: 50%;
-            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
+        /* Charts */
         .chart-container {
             position: relative;
-            height: 250px;
+            height: 280px;
             margin-bottom: 20px;
         }
         
+        /* Payslip */
         .payslip {
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            font-family: Arial, sans-serif;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'Inter', sans-serif;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
         .payslip-header {
             text-align: center;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #333;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #eee;
         }
         
         .payslip-title {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            color: var(--primary-color);
         }
         
         .payslip-period {
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
         }
         
         .payslip-section {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .payslip-section-title {
             font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 3px;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 6px;
+            color: var(--primary-color);
         }
         
         .payslip-row {
             display: flex;
-            margin-bottom: 3px;
-            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
         
         .payslip-label {
             flex: 1;
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--text-dark);
         }
         
         .payslip-value {
             flex: 2;
+            color: var(--text-dark);
         }
         
         .payslip-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-            font-size: 0.8rem;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
         
         .payslip-table th {
-            background-color: #f2f2f2;
+            background-color: #f8f9fa;
             text-align: left;
-            padding: 6px;
-            border: 1px solid #ddd;
+            padding: 10px;
+            border: 1px solid #eee;
+            font-weight: 600;
         }
         
         .payslip-table td {
-            padding: 6px;
-            border: 1px solid #ddd;
+            padding: 10px;
+            border: 1px solid #eee;
+        }
+        
+        .payslip-table tr:last-child td {
+            border-bottom: none;
         }
         
         .payslip-footer {
-            margin-top: 20px;
-            padding-top: 8px;
-            border-top: 1px solid #333;
+            margin-top: 25px;
+            padding-top: 12px;
+            border-top: 1px solid #eee;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
         }
         
         .payslip-signature {
             display: flex;
             justify-content: space-between;
-            margin-top: 20px;
+            margin-top: 30px;
         }
         
         .payslip-signature-line {
-            width: 120px;
+            width: 150px;
             border-top: 1px solid #333;
             text-align: center;
-            padding-top: 3px;
-            font-size: 0.8rem;
+            padding-top: 5px;
+            font-size: 0.85rem;
         }
         
-        /* Bottom navigation */
+        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: white;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.08);
             z-index: 1000;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
+            padding: 12px 0;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.9);
         }
         
         .nav-btn {
@@ -309,58 +474,196 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--secondary-color);
+            color: var(--text-light);
             text-decoration: none;
             font-size: 0.8rem;
-            padding: 5px;
-            border-radius: 5px;
+            padding: 8px;
+            border-radius: 12px;
             transition: all 0.3s;
             width: 100%;
-            max-width: 100px;
+            max-width: 80px;
+            position: relative;
         }
         
         .nav-btn i {
-            font-size: 1.2rem;
-            margin-bottom: 3px;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            transition: all 0.3s;
         }
         
         .nav-btn.active {
             color: var(--primary-color);
-            background-color: rgba(52, 58, 64, 0.1);
+            transform: translateY(-10px);
+        }
+        
+        .nav-btn.active i {
+            transform: scale(1.2);
+        }
+        
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 6px;
+            height: 6px;
+            background: var(--primary-color);
+            border-radius: 50%;
         }
         
         .tab-content {
-            padding-bottom: 60px;
+            padding-bottom: 80px;
         }
         
-        /* Employee info summary */
+        /* Employee Info Summary */
         .employee-summary {
-            background-color: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background: var(--card-gradient);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .employee-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-light));
         }
         
         .employee-summary-row {
             display: flex;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
         }
         
         .employee-summary-label {
             flex: 1;
-            font-weight: bold;
-            color: var(--secondary-color);
+            font-weight: 600;
+            color: var(--text-light);
         }
         
         .employee-summary-value {
             flex: 2;
+            font-weight: 500;
         }
         
         .absent-text {
             color: var(--danger-color);
             font-weight: bold;
+        }
+        
+        /* Summary Cards */
+        .summary-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            background: var(--card-gradient);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .summary-card .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        /* Buttons */
+        .btn {
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-outline-light {
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Form Elements */
+        .form-control {
+            border-radius: 50px;
+            padding: 12px 20px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+            background: white;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        /* Modal */
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-bottom: none;
+            padding: 20px;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        .btn-close {
+            filter: invert(1);
+        }
+        
+        /* Floating Elements */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
         
         /* Print-specific styles */
@@ -378,20 +681,86 @@
                 width: 100%;
                 max-width: 100%;
                 margin: 0;
-                padding: 15px;
+                padding: 20px;
                 border: none;
                 background-color: white;
                 page-break-after: always;
+                box-shadow: none;
             }
             .no-print, .no-print * {
                 display: none !important;
             }
         }
         
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px;
+                margin: 20px;
+                border-radius: 20px;
+            }
+            
+            .month-display {
+                font-size: 1rem;
+                min-width: 140px;
+            }
+            
+            .month-btn {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .employee-summary-row {
+                flex-direction: column;
+            }
+            
+            .employee-summary-label,
+            .employee-summary-value {
+                flex: auto;
+            }
+            
+            .employee-summary-label {
+                margin-bottom: 2px;
+            }
+            
+            .payslip-row {
+                flex-direction: column;
+            }
+            
+            .payslip-label,
+            .payslip-value {
+                flex: auto;
+            }
+            
+            .payslip-label {
+                margin-bottom: 2px;
+            }
+            
+            .payslip-signature {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .payslip-signature-line {
+                width: 120px;
+            }
+            
+            .nav-btn {
+                max-width: 70px;
+                font-size: 0.7rem;
+            }
+            
+            .nav-btn i {
+                font-size: 1.2rem;
+            }
+        }
+        
         @media (max-width: 576px) {
             .login-container {
-                padding: 20px;
-                margin: 20px;
+                padding: 25px;
+                margin: 15px;
+                border-radius: 18px;
             }
             
             .table {
@@ -399,56 +768,40 @@
             }
             
             .table th, .table td {
-                padding: 6px;
+                padding: 8px 10px;
             }
             
             .status-legend {
-                gap: 5px;
+                gap: 8px;
             }
             
             .status-item {
-                padding: 4px 8px;
-                font-size: 0.7rem;
+                padding: 6px 10px;
+                font-size: 0.75rem;
             }
             
             .month-display {
-                font-size: 1rem;
+                font-size: 0.95rem;
                 min-width: 120px;
+                padding: 6px 15px;
             }
             
             .nav-btn {
-                font-size: 0.7rem;
+                max-width: 60px;
+                font-size: 0.65rem;
+                padding: 6px;
             }
             
             .nav-btn i {
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
             
             .payslip-title {
-                font-size: 1rem;
+                font-size: 1.2rem;
             }
             
             .payslip-period {
-                font-size: 0.8rem;
-            }
-            
-            .payslip-row {
-                flex-direction: column;
-                font-size: 0.8rem;
-            }
-            
-            .payslip-label, .payslip-value {
-                flex: auto;
-            }
-            
-            .payslip-signature {
-                flex-direction: column;
-                align-items: center;
-                gap: 15px;
-            }
-            
-            .payslip-signature-line {
-                width: 100px;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -456,7 +809,7 @@
 <body>
     <!-- Loading Indicator -->
     <div class="loading">
-        <div class="loading-content">
+        <div class="loading-content neumorphic">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -465,10 +818,26 @@
     </div>
 
     <!-- Login Container -->
-    <div class="login-container" id="login-container">
+    <div class="login-container neumorphic" id="login-container">
         <div class="text-center mb-4">
-            <img src="weoneimage.jpg" height="200px" width="200px" alt="WeOne Logo" class="mb-3">
-            <h3>Employee Portal</h3>
+            <div class="floating">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="url(#paint0_linear)"/>
+                    <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="white"/>
+                    <path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" fill="url(#paint1_linear)"/>
+                    <defs>
+                        <linearGradient id="paint0_linear" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4361ee"/>
+                            <stop offset="1" stop-color="#4cc9f0"/>
+                        </linearGradient>
+                        <linearGradient id="paint1_linear" x1="11" y1="11" x2="13" y2="13" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4361ee"/>
+                            <stop offset="1" stop-color="#4cc9f0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h3 class="mt-3">Employee Portal</h3>
             <p class="text-muted">View your roster, attendance and payslips</p>
         </div>
         
@@ -497,7 +866,7 @@
                     </div>
                     <div class="col-4 text-end">
                         <button id="logout-btn" class="btn btn-sm btn-outline-light">
-                            <i class="fas fa-sign-out-alt"></i>
+                            <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
                     </div>
                 </div>
@@ -506,7 +875,7 @@
 
         <div class="container">
             <!-- Employee Summary -->
-            <div class="employee-summary">
+            <div class="employee-summary neumorphic">
                 <div class="employee-summary-row">
                     <div class="employee-summary-label">WE ONE ID:</div>
                     <div class="employee-summary-value" id="info-weone-id"></div>
@@ -526,7 +895,7 @@
                 <button id="prev-month-btn" class="month-btn" title="Previous Month">
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <div id="month-display" class="month-display">April 2025</div>
+                <div id="month-display" class="month-display neumorphic-flat">April 2025</div>
                 <button id="next-month-btn" class="month-btn" title="Next Month">
                     <i class="fas fa-chevron-right"></i>
                 </button>
@@ -538,29 +907,29 @@
                 <div class="tab-pane fade show active" id="roster-tab-pane" role="tabpanel" aria-labelledby="roster-tab" tabindex="0">
                     <!-- Status Legend -->
                     <div class="status-legend">
-                        <div class="status-item">
+                        <div class="status-item neumorphic-flat">
                             <div class="status-color" style="background-color: #e3f2fd;"></div>
                             <span>Vacation/Leave</span>
                         </div>
-                        <div class="status-item">
+                        <div class="status-item neumorphic-flat">
                             <div class="status-color" style="background-color: #e8f5e9;"></div>
                             <span>Day Off</span>
                         </div>
-                        <div class="status-item">
+                        <div class="status-item neumorphic-flat">
                             <div class="status-color" style="background-color: #ffebee;"></div>
                             <span>NB (06:00-19:00)</span>
                         </div>
                     </div>
                     
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="roster-table">
+                    <div class="table-responsive neumorphic-flat">
+                        <table class="table" id="roster-table">
                             <thead>
                                 <tr>
                                     <th>Day</th>
                                     <th>Date</th>
                                     <th>Shift</th>
                                     <th>Status</th>
-                                    <th>Hours</th>
+                                    <th>Scheduled Hours</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -572,55 +941,46 @@
                 
                 <!-- Attendance Tab -->
                 <div class="tab-pane fade" id="attendance-tab-pane" role="tabpanel" aria-labelledby="attendance-tab" tabindex="0">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <i class="fas fa-chart-pie me-2"></i> Attendance Summary
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-primary fw-bold" id="summary-days-worked">0</div>
-                                        <small class="text-muted">Days Worked</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-primary fw-bold" id="summary-total-hours">0</div>
-                                        <small class="text-muted">Total Hours</small>
-                                    </div>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-primary" id="summary-days-worked">0</div>
+                                <div class="label">Days Worked</div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-primary fw-bold" id="summary-days-off">0</div>
-                                        <small class="text-muted">Days Off</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-primary fw-bold" id="summary-overtime">0 hrs</div>
-                                        <small class="text-muted">Overtime</small>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-primary" id="summary-total-hours">0</div>
+                                <div class="label">Total Hours</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-primary" id="summary-days-off">0</div>
+                                <div class="label">Days Off</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-primary" id="summary-overtime">0 hrs</div>
+                                <div class="label">Overtime</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="card">
+                    <div class="card neumorphic">
                         <div class="card-header">
                             <i class="fas fa-table me-2"></i> Detailed Attendance
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="attendance-table">
+                                <table class="table" id="attendance-table">
                                     <thead>
                                         <tr>
                                             <th>Day</th>
                                             <th>Date</th>
                                             <th>Shift</th>
-                                            <th>Hours</th>
+                                            <th>Actual Hours</th>
                                             <th>Status</th>
                                         </tr>
                                     </thead>
@@ -635,54 +995,46 @@
                 
                 <!-- Payslip Tab -->
                 <div class="tab-pane fade" id="payslip-tab-pane" role="tabpanel" aria-labelledby="payslip-tab" tabindex="0">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <i class="fas fa-money-bill-wave me-2"></i> Salary Summary
+                    <div class="row">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-success" id="salary-basic">AED 0</div>
+                                <div class="label">Basic Salary</div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-success fw-bold" id="salary-basic">AED 0</div>
-                                        <small class="text-muted">Basic Salary</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-success fw-bold" id="salary-food">AED 0</div>
-                                        <small class="text-muted">Food Allowance</small>
-                                    </div>
-                                </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-success" id="salary-food">AED 0</div>
+                                <div class="label">Food Allowance</div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-success fw-bold" id="salary-work-nature">AED 0</div>
-                                        <small class="text-muted">Work Nature</small>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="text-center">
-                                        <div class="text-success fw-bold" id="salary-total">AED 0</div>
-                                        <small class="text-muted">Net Salary</small>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-success" id="salary-work-nature">AED 0</div>
+                                <div class="label">Work Nature</div>
                             </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary w-100" id="view-payslip-btn">
-                                    <i class="fas fa-file-invoice me-1"></i> View Full Payslip
-                                </button>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="summary-card neumorphic">
+                                <div class="value text-success" id="salary-total">AED 0</div>
+                                <div class="label">Net Salary</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="card">
+                    <div class="text-center mb-4">
+                        <button class="btn btn-primary" id="view-payslip-btn">
+                            <i class="fas fa-file-invoice me-2"></i> View Full Payslip
+                        </button>
+                    </div>
+                    
+                    <div class="card neumorphic">
                         <div class="card-header">
                             <i class="fas fa-chart-line me-2"></i> Monthly Summary
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="monthly-summary-table">
+                                <table class="table" id="monthly-summary-table">
                                     <thead>
                                         <tr>
                                             <th>Month</th>
@@ -825,22 +1177,24 @@
         let attendanceData = {};
         let salaryData = {};
         let monthlyStats = [];
+        let departmentShiftKeys = {}; // To store shift keys for the department
         let attendanceChart = null;
         let hoursChart = null;
         let shiftChart = null;
         const monthNames = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
         
-        // Status options with colors
-        const statusOptions = {
-            'VI': { color: '#e3f2fd', description: 'Vacation/Leave' },
-            'VJ': { color: '#fff8e1', description: 'Vacation/Job' },
-            'YY': { color: '#e8f5e9', description: 'Day Off' },
-            'NB': { color: '#ffebee', description: 'NB (06:00-19:00)' },
-            'DF': { color: '#f3e5f5', description: 'DF (18:00-07:00)' },
-            'EX': { color: '#e0f7fa', description: 'EX (08:00-20:00)' },
-            'NR': { color: '#fff3e0', description: 'NR (20:00-08:00)' },
-            'DX': { color: '#e8eaf6', description: 'DX (09:00-21:00)' },
-            'NI': { color: '#f1f8e9', description: 'NI (21:00-09:00)' }
+        // Default status options with colors and shift hours
+        const defaultStatusOptions = {
+            'VI': { color: '#e3f2fd', description: 'Vacation/Leave', hours: 0 },
+            'VJ': { color: '#fff8e1', description: 'Vacation/Job', hours: 0 },
+            'YY': { color: '#e8f5e9', description: 'Day Off', hours: 0 },
+            'NB': { color: '#ffebee', description: 'NB (06:00-19:00)', hours: 13 },
+            'DF': { color: '#f3e5f5', description: 'DF (18:00-07:00)', hours: 13 },
+            'EX': { color: '#e0f7fa', description: 'EX (08:00-20:00)', hours: 12 },
+            'NR': { color: '#fff3e0', description: 'NR (20:00-08:00)', hours: 12 },
+            'DX': { color: '#e8eaf6', description: 'DX (09:00-21:00)', hours: 12 },
+            'NI': { color: '#f1f8e9', description: 'NI (21:00-09:00)', hours: 12 },
+            'TT': { color: '#e8f5e9', description: '12:00-00:00', hours: 12 }
         };
 
         // Initialize the app
@@ -938,62 +1292,94 @@
                     employeeData = foundEmployee;
                     employeeData.department = department;
                     
-                    // Load roster data
-                    database.ref(`rosters/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((rosterSnapshot) => {
-                        const rosterDataFromDB = rosterSnapshot.val();
+                    // Load department shift keys
+                    database.ref(`departments/${department}/shiftKeys`).once('value').then((shiftKeysSnapshot) => {
+                        const shiftKeys = shiftKeysSnapshot.val();
+                        departmentShiftKeys = {};
                         
-                        if (rosterDataFromDB) {
-                            rosterData = rosterDataFromDB.days || [];
-                        } else {
-                            rosterData = [];
+                        if (shiftKeys) {
+                            shiftKeys.forEach(shift => {
+                                departmentShiftKeys[shift.value] = {
+                                    description: shift.description,
+                                    color: shift.color || defaultStatusOptions[shift.value]?.color || '#e8f5e9',
+                                    hours: shift.hours || defaultStatusOptions[shift.value]?.hours || 0
+                                };
+                            });
                         }
                         
-                        // Load attendance data
-                        database.ref(`attendance/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((attendanceSnapshot) => {
-                            attendanceData = attendanceSnapshot.val() || {};
+                        // Load roster data
+                        database.ref(`rosters/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((rosterSnapshot) => {
+                            const rosterDataFromDB = rosterSnapshot.val();
                             
-                            // Load salary data
-                            database.ref(`salaries/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((salarySnapshot) => {
-                                salaryData = salarySnapshot.val() || {};
+                            if (rosterDataFromDB) {
+                                rosterData = rosterDataFromDB.days || [];
+                            } else {
+                                rosterData = [];
+                            }
+                            
+                            // Load attendance data
+                            database.ref(`attendance/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((attendanceSnapshot) => {
+                                const attendanceDataFromDB = attendanceSnapshot.val();
+                                attendanceData = {};
                                 
-                                // Load salary settings for this designation
-                                database.ref(`salarySettings/${department}/${employeeData.designation}`).once('value').then((settingsSnapshot) => {
-                                    const settings = settingsSnapshot.val();
-                                    
-                                    if (settings) {
-                                        // If no salary data exists, initialize with settings
-                                        if (!salaryData.basicSalary) {
-                                            salaryData.basicSalary = settings.basicSalary || 2000;
-                                            salaryData.foodAllowance = settings.foodAllowance || 300;
-                                            salaryData.workNatureAllowance = settings.workNatureAllowance || 200;
-                                        }
-                                    }
-                                    
-                                    // Load monthly stats
-                                    loadMonthlyStats().then(() => {
-                                        resolve();
+                                if (attendanceDataFromDB) {
+                                    // Convert the attendance data from object with numeric keys to array
+                                    Object.keys(attendanceDataFromDB).forEach(dayIndex => {
+                                        attendanceData[parseInt(dayIndex)] = attendanceDataFromDB[dayIndex];
                                     });
-                                }).catch(() => {
-                                    // If no settings found, use defaults
-                                    if (!salaryData.basicSalary) {
-                                        salaryData.basicSalary = 2000;
-                                        salaryData.foodAllowance = 300;
-                                        salaryData.workNatureAllowance = 200;
-                                    }
+                                }
+                                
+                                // Load salary data
+                                database.ref(`salaries/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((salarySnapshot) => {
+                                    salaryData = salarySnapshot.val() || {};
                                     
+                                    // Load salary settings for this designation
+                                    database.ref(`salarySettings/${department}/${employeeData.designation}`).once('value').then((settingsSnapshot) => {
+                                        const settings = settingsSnapshot.val();
+                                        
+                                        if (settings) {
+                                            // If no salary data exists, initialize with settings
+                                            if (!salaryData.basicSalary) {
+                                                salaryData.basicSalary = settings.basicSalary || 2000;
+                                                salaryData.foodAllowance = settings.foodAllowance || 300;
+                                                salaryData.workNatureAllowance = settings.workNatureAllowance || 200;
+                                            }
+                                        }
+                                        
+                                        // Load monthly stats
+                                        loadMonthlyStats().then(() => {
+                                            resolve();
+                                        });
+                                    }).catch(() => {
+                                        // If no settings found, use defaults
+                                        if (!salaryData.basicSalary) {
+                                            salaryData.basicSalary = 2000;
+                                            salaryData.foodAllowance = 300;
+                                            salaryData.workNatureAllowance = 200;
+                                        }
+                                        
+                                        loadMonthlyStats().then(() => {
+                                            resolve();
+                                        });
+                                    });
+                                }).catch((error) => {
+                                    console.error("Error loading salary data:", error);
+                                    salaryData = {};
                                     loadMonthlyStats().then(() => {
                                         resolve();
                                     });
                                 });
                             }).catch((error) => {
-                                console.error("Error loading salary data:", error);
+                                console.error("Error loading attendance data:", error);
+                                attendanceData = {};
                                 salaryData = {};
                                 loadMonthlyStats().then(() => {
                                     resolve();
                                 });
                             });
                         }).catch((error) => {
-                            console.error("Error loading attendance data:", error);
+                            console.error("Error loading roster data:", error);
+                            rosterData = [];
                             attendanceData = {};
                             salaryData = {};
                             loadMonthlyStats().then(() => {
@@ -1001,12 +1387,88 @@
                             });
                         });
                     }).catch((error) => {
-                        console.error("Error loading roster data:", error);
-                        rosterData = [];
-                        attendanceData = {};
-                        salaryData = {};
-                        loadMonthlyStats().then(() => {
-                            resolve();
+                        console.error("Error loading shift keys:", error);
+                        // Continue with default shift keys
+                        departmentShiftKeys = {};
+                        
+                        // Load roster data
+                        database.ref(`rosters/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((rosterSnapshot) => {
+                            const rosterDataFromDB = rosterSnapshot.val();
+                            
+                            if (rosterDataFromDB) {
+                                rosterData = rosterDataFromDB.days || [];
+                            } else {
+                                rosterData = [];
+                            }
+                            
+                            // Load attendance data
+                            database.ref(`attendance/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((attendanceSnapshot) => {
+                                const attendanceDataFromDB = attendanceSnapshot.val();
+                                attendanceData = {};
+                                
+                                if (attendanceDataFromDB) {
+                                    // Convert the attendance data from object with numeric keys to array
+                                    Object.keys(attendanceDataFromDB).forEach(dayIndex => {
+                                        attendanceData[parseInt(dayIndex)] = attendanceDataFromDB[dayIndex];
+                                    });
+                                }
+                                
+                                // Load salary data
+                                database.ref(`salaries/${department}/${monthYearKey}/${employeeData.weoneId}`).once('value').then((salarySnapshot) => {
+                                    salaryData = salarySnapshot.val() || {};
+                                    
+                                    // Load salary settings for this designation
+                                    database.ref(`salarySettings/${department}/${employeeData.designation}`).once('value').then((settingsSnapshot) => {
+                                        const settings = settingsSnapshot.val();
+                                        
+                                        if (settings) {
+                                            // If no salary data exists, initialize with settings
+                                            if (!salaryData.basicSalary) {
+                                                salaryData.basicSalary = settings.basicSalary || 2000;
+                                                salaryData.foodAllowance = settings.foodAllowance || 300;
+                                                salaryData.workNatureAllowance = settings.workNatureAllowance || 200;
+                                            }
+                                        }
+                                        
+                                        // Load monthly stats
+                                        loadMonthlyStats().then(() => {
+                                            resolve();
+                                        });
+                                    }).catch(() => {
+                                        // If no settings found, use defaults
+                                        if (!salaryData.basicSalary) {
+                                            salaryData.basicSalary = 2000;
+                                            salaryData.foodAllowance = 300;
+                                            salaryData.workNatureAllowance = 200;
+                                        }
+                                        
+                                        loadMonthlyStats().then(() => {
+                                            resolve();
+                                        });
+                                    });
+                                }).catch((error) => {
+                                    console.error("Error loading salary data:", error);
+                                    salaryData = {};
+                                    loadMonthlyStats().then(() => {
+                                        resolve();
+                                    });
+                                });
+                            }).catch((error) => {
+                                console.error("Error loading attendance data:", error);
+                                attendanceData = {};
+                                salaryData = {};
+                                loadMonthlyStats().then(() => {
+                                    resolve();
+                                });
+                            });
+                        }).catch((error) => {
+                            console.error("Error loading roster data:", error);
+                            rosterData = [];
+                            attendanceData = {};
+                            salaryData = {};
+                            loadMonthlyStats().then(() => {
+                                resolve();
+                            });
                         });
                     });
                 }).catch((error) => {
@@ -1108,22 +1570,24 @@
             // Calculate from roster and attendance data
             if (rosterData && rosterData.length > 0) {
                 rosterData.forEach((status, dayIndex) => {
-                    // Skip if status is vacation/leave
-                    if (status === 'VI' || status === 'VJ') {
-                        daysOff++;
-                        return;
-                    }
+                    // Get shift info from department shift keys or use default
+                    let shiftInfo = departmentShiftKeys[status] || defaultStatusOptions[status] || {
+                        description: status,
+                        color: '#e8f5e9',
+                        hours: 0
+                    };
                     
-                    if (status === 'YY') {
+                    // Check for days off (shifts with 0 hours)
+                    if (shiftInfo.hours === 0) {
                         daysOff++;
                         return;
                     }
                     
                     // Check attendance data for this day
                     const attendanceRecord = attendanceData[dayIndex];
+                    const hours = parseFloat(attendanceRecord?.hours) || 0;
                     
                     if (attendanceRecord) {
-                        const hours = parseFloat(attendanceRecord.hours) || 0;
                         if (hours > 0) {
                             daysWorked++;
                             totalHours += hours;
@@ -1147,6 +1611,11 @@
             summaryTotalHours.textContent = totalHours.toFixed(1);
             summaryDaysOff.textContent = daysOff;
             summaryOvertime.textContent = `${overtimeHours.toFixed(1)} hrs`;
+            
+            // Update salary data with calculated values
+            salaryData.daysWorked = daysWorked;
+            salaryData.totalHours = totalHours;
+            salaryData.overtime = overtimeHours * (salaryData.basicSalary / 200); // Assuming 200 hours is full month
         }
 
         function renderRosterTable() {
@@ -1167,33 +1636,26 @@
                 const date = new Date(currentYear, currentMonth, i + 1);
                 const dayName = dayNames[date.getDay()];
                 const status = rosterData[i] || 'YY';
-                const statusInfo = statusOptions[status] || statusOptions['YY'];
                 
-                // Get attendance record for this day
-                const attendanceRecord = attendanceData[i];
-                let hoursWorked = '';
-                let attendanceStatus = '';
+                // Get shift info from department shift keys or use default
+                let shiftInfo = departmentShiftKeys[status] || defaultStatusOptions[status] || {
+                    description: status,
+                    color: '#e8f5e9',
+                    hours: 0
+                };
                 
-                if (attendanceRecord) {
-                    const hours = parseFloat(attendanceRecord.hours) || 0;
-                    if (hours > 0) {
-                        hoursWorked = hours;
-                    } else {
-                        hoursWorked = '<span class="absent-text">Absent</span>';
-                    }
-                } else {
-                    hoursWorked = '<span class="absent-text">Absent</span>';
-                }
+                // Get scheduled hours from shift info
+                const scheduledHours = shiftInfo.hours || 0;
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${dayName}</td>
                     <td>${i + 1}</td>
-                    <td>${statusInfo.description}</td>
-                    <td class="status-cell" style="background-color: ${statusInfo.color}">
+                    <td>${shiftInfo.description}</td>
+                    <td class="status-cell" style="background-color: ${shiftInfo.color}">
                         ${status}
                     </td>
-                    <td>${hoursWorked}</td>
+                    <td>${scheduledHours}</td>
                 `;
                 
                 rosterTableBody.appendChild(row);
@@ -1218,36 +1680,28 @@
                 const date = new Date(currentYear, currentMonth, i + 1);
                 const dayName = dayNames[date.getDay()];
                 const status = rosterData[i] || 'YY';
-                const statusInfo = statusOptions[status] || statusOptions['YY'];
                 
-                // Skip days off and vacations
-                if (status === 'YY' || status === 'VI' || status === 'VJ') continue;
+                // Get shift info from department shift keys or use default
+                let shiftInfo = departmentShiftKeys[status] || defaultStatusOptions[status] || {
+                    description: status,
+                    color: '#e8f5e9',
+                    hours: 0
+                };
+                
+                // Skip days off (shifts with 0 hours)
+                if (shiftInfo.hours === 0) continue;
                 
                 // Get attendance record for this day
                 const attendanceRecord = attendanceData[i];
-                let hoursWorked = '';
-                let attendanceStatus = '';
-                
-                if (attendanceRecord) {
-                    const hours = parseFloat(attendanceRecord.hours) || 0;
-                    if (hours > 0) {
-                        hoursWorked = hours;
-                        attendanceStatus = 'Present';
-                    } else {
-                        hoursWorked = '<span class="absent-text">Absent</span>';
-                        attendanceStatus = '<span class="absent-text">Absent</span>';
-                    }
-                } else {
-                    hoursWorked = '<span class="absent-text">Absent</span>';
-                    attendanceStatus = '<span class="absent-text">Absent</span>';
-                }
+                const hours = parseFloat(attendanceRecord?.hours) || 0;
+                let attendanceStatus = hours > 0 ? 'Present' : '<span class="absent-text">Absent</span>';
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${dayName}</td>
                     <td>${i + 1}</td>
-                    <td>${statusInfo.description}</td>
-                    <td>${hoursWorked}</td>
+                    <td>${shiftInfo.description}</td>
+                    <td>${hours.toFixed(1)}</td>
                     <td>${attendanceStatus}</td>
                 `;
                 
@@ -1543,6 +1997,7 @@
             attendanceData = {};
             salaryData = {};
             monthlyStats = [];
+            departmentShiftKeys = {};
             
             loginContainer.style.display = 'flex';
             appContainer.style.display = 'none';
